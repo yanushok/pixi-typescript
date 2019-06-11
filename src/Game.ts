@@ -25,6 +25,8 @@ class Game {
             resolution: window.devicePixelRatio,
         });
 
+        this.application.renderer.backgroundColor = 0x061639;
+
         this.window.onresize = this.handleWindowResize.bind(this);
         this.window.document.body.appendChild(this.application.view);
     }
@@ -36,7 +38,6 @@ class Game {
         Game.scaleToWindow(this.window, canvas, 'white');
 
         new MenuScene(this.application.stage, this.width, this.height).setup().setVisibility(true);
-        new GameScene(this.application.stage, this.width, this.height).setup();
     }
 
     public gameOver(): void {

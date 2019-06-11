@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 
 import Scene from "./Scene";
+import GameScene from "./GameScene";
 
 class MenuScene extends Scene {
     public setup(): Scene {
@@ -13,11 +14,12 @@ class MenuScene extends Scene {
         button.drawRect(this.width / 2 - 100, this.height / 2 - 50, 200, 100);
         button.endFill();
         button.interactive = true;
+        button.buttonMode  = true;
         button.on('click', this.startGameHandler.bind(this));
         button.on('tap', this.startGameHandler.bind(this));
         this.scene.addChild(button);
 
-        const buttonText = new PIXI.Text('Play game', {
+        const buttonText = new PIXI.Text('Start new game', {
             fill: "white"
         });
         buttonText.name = 'playButtonText';
@@ -28,8 +30,8 @@ class MenuScene extends Scene {
     }
 
     private startGameHandler() {
+        new GameScene(this.stage, this.width, this.height).setup().setVisibility(true);
         this.setVisibility(false);
-        this.stage.getChildByName('GameScene').visible = true;
     }
 }
 

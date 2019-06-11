@@ -20,6 +20,10 @@ abstract class Scene {
     public setVisibility(visible: boolean): void {
         this.scene.visible = visible;
     }
+
+    public removeScene() {
+        this.stage.removeChild(this.scene);
+    }
 }
 
 export default Scene;
