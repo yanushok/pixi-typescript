@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 
 import Scene from "./Scene";
 import GameScene from "./GameScene";
+import { GameState } from '../Settings';
 
 class MenuScene extends Scene {
     public setup(): Scene {
@@ -16,7 +17,6 @@ class MenuScene extends Scene {
         button.interactive = true;
         button.buttonMode  = true;
         button.on('click', this.startGameHandler.bind(this));
-        button.on('tap', this.startGameHandler.bind(this));
         this.scene.addChild(button);
 
         const buttonText = new PIXI.Text('Start new game', {
@@ -30,6 +30,7 @@ class MenuScene extends Scene {
     }
 
     private startGameHandler() {
+        GameState.screen = 'game';
         new GameScene(this.stage, this.width, this.height).setup().setVisibility(true);
         this.setVisibility(false);
     }

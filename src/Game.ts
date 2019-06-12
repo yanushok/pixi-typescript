@@ -1,16 +1,17 @@
 import * as PIXI from 'pixi.js'
-import Tile, { TileState } from './Tile';
-import Settings from './Settings';
+
+import { GameState } from './Settings';
 import MenuScene from './scenes/MenuScene';
-import GameScene from './scenes/GameScene';
+import Scene from './scenes/Scene';
 
 class Game {
     public application: PIXI.Application;
     private window: Window;
-    private grid: Array<Tile> = [];
 
     private width: number;
     private height: number;
+
+    private scenes: {[key: string]: Scene} = {};
 
     constructor(window: Window, width: number = 600, height: number = 800) {
         this.window = window;
@@ -37,60 +38,8 @@ class Game {
         this.application.renderer.resize(canvas.width, canvas.height);
         Game.scaleToWindow(this.window, canvas, 'white');
 
+        GameState.screen = 'game';
         new MenuScene(this.application.stage, this.width, this.height).setup().setVisibility(true);
-    }
-
-    public gameOver(): void {
-        this.application.stage.getChildByName('gameMainScene').visible = false;
-        this.application.stage.getChildByName('gameOverScene').visible = true;
-    }
-
-    public win(): void {
-        this.application.stage.getChildByName('gameMainScene').visible = false;
-        this.application.stage.getChildByName('gameWinScene').visible = true;
-    }
-
-    public checkState() {
-        for (let i = 0; i < this.grid.length; i++) {
-            if (!this.grid[i].hasMine() && this.grid[i].currentState !== TileState.visible) {
-                return;
-            }
-        }
-
-        this.win();
-    }
-
-    public startLevel(diff) {
-        this.application.stage.getChildByName('gameMainScene').visible = true;
-
-        this.grid = [];
-
-        // offsetX = Math.floor((document.getElementById('game').clientWidth -
-        //     (cDiff.width * gameState.tileW)) / 2);
-
-        // offsetY = Math.floor((document.getElementById('game').clientHeight -
-        //     (cDiff.height * gameState.tileH)) / 2);
-
-        for (let py = 0; py < Settings.height; py++) {
-            for (let px = 0; px < Settings.width; px++) {
-                this.grid.push(new Tile(px, py, this.grid));
-            }
-        }
-
-        let minesPlaced = 0;
-
-        while (minesPlaced < Settings.mines) {
-            const idx = Math.floor(Math.random() * this.grid.length);
-
-            if (this.grid[idx].hasMine()) { continue; }
-
-            this.grid[idx].setMine();
-            minesPlaced++;
-        }
-
-        for (var i in this.grid) {
-            this.grid[i].calcDanger();
-        }
     }
 
     private handleWindowResize(): void {

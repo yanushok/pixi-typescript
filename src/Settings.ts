@@ -1,18 +1,13 @@
-export const gameState = {
-    // difficulty: 'easy',
+export const GameState = {
     screen: 'menu',
-    // newBest: false,
-    timeTaken: 0,
-    tileW: 20,
-    tileH: 20
+    tileW: 40,
+    tileH: 40,
 };
 
 const settings = {
     width: 10,
     height: 10,
     mines: 10,
-    bestTime: 0,
-    menuBox: [0, 0]
 };
 
 export default settings;

@@ -17,8 +17,9 @@ abstract class Scene {
 
     abstract setup(): Scene;
 
-    public setVisibility(visible: boolean): void {
+    public setVisibility(visible: boolean): Scene {
         this.scene.visible = visible;
+        return this;
     }
 
     public removeScene() {

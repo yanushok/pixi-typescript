@@ -1,4 +1,5 @@
-import Settings from './Settings';
+import Settings, { GameState } from './Settings';
+import GameScene from './scenes/GameScene';
 
 export enum TileState {
     hidden,
@@ -12,12 +13,12 @@ export default class Tile {
     private _hasMine: boolean = false;
     public danger: number = 0;
     public currentState: TileState = TileState.hidden;
-    private grid: Array<Tile>;
+    private parentScene: GameScene;
 
-    constructor(x: number, y: number, grid: any) {
+    constructor(x: number, y: number, scene: any) {
         this.x = x;
         this.y = y;
-        this.grid = grid;
+        this.parentScene = scene;
     }
 
     public calcDanger(): void {
@@ -31,7 +32,7 @@ export default class Tile {
                     continue;
                 }
 
-                if (this.grid[y * Settings.width + x]._hasMine) {
+                if (this.parentScene.grid[y * Settings.width + x]._hasMine) {
                     this.danger++;
                 }
             }
@@ -46,29 +47,34 @@ export default class Tile {
         this._hasMine = true;
     }
 
-    public setFlag(): void {
+    public setFlag(e: PIXI.interaction.InteractionEvent): void {
+        e.data.originalEvent.preventDefault();
         if (this.currentState === TileState.hidden) {
             this.currentState = TileState.flagged;
         } else if (this.currentState === TileState.flagged) {
             this.currentState = TileState.hidden;
         }
+        this.parentScene.drawLevel();
     }
 
-    public click(): void {
+    public click(e: PIXI.interaction.InteractionEvent): void {
+        e.data.originalEvent.preventDefault();
         if (this.currentState !== TileState.hidden) {
             return;
         }
 
         if (this._hasMine) {
-            //gameOver();
+            this.gameOver();
+            this.parentScene.drawLevel();
         } else if (this.danger > 0) {
             this.currentState = TileState.visible;
+            this.parentScene.drawLevel();
         } else {
             this.currentState = TileState.visible;
             this.revealNeighbours();
         }
 
-        // checkState();
+        this.parentScene.checkState();
     }
 
     public revealNeighbours(): void {
@@ -83,7 +89,7 @@ export default class Tile {
                 }
 
                 const idx = y * Settings.width + x;
-                const currentTile = this.grid[idx];
+                const currentTile = this.parentScene.grid[idx];
 
                 if (currentTile.currentState === TileState.hidden) {
                     currentTile.currentState = TileState.visible;
@@ -91,8 +97,13 @@ export default class Tile {
                     if (currentTile.danger == 0) {
                         currentTile.revealNeighbours();
                     }
+                    this.parentScene.drawLevel();
                 }
             }
         }
+    }
+
+    private gameOver() {
+        GameState.screen = 'lost';
     }
 }
